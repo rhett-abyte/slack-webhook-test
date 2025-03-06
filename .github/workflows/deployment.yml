@@ -4,26 +4,41 @@ on:
   push:
     branches: [ main ]
 
+# jobs:
+#     notify-tydo-klaviyo-update:
+#         name: "Notify Tydo about Klaviyo Connector Update"
+#         runs-on: ubuntu-latest
+#         #needs:
+#             #- publish_connectors
+#         #if: |
+#         #    success() && 
+#         #    (contains(github.event.head_commit.modified, 'airbyte-integrations/connectors/source-klaviyo/metadata.yaml') || 
+#         #    github.event.inputs.connectors-options == '--name=source-klaviyo')
+#         steps:
+#             - name: Send Tydo notification about Klaviyo connector update
+#             - id: tydo-slack
+#             - uses: slackapi/slack-github-action@v2.0.0
+#             - with:
+#                 payload: |
+#                 {
+#                     "text": "🔔 *New Klaviyo Connector Version Available*\n\nA new version of the Airbyte Klaviyo source connector has been published.\n\nDetails:\n• Published by: ${{ github.actor }}\n• Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n• Date: ${{ format(github.event.head_commit.timestamp || github.event.repository.updated_at, 'MMMM DD, YYYY') }}"
+#                 }
+#             - env:
+#                 #SLACK_WEBHOOK_URL: ${{ secrets.TYDO_EXTERNAL_WEBHOOK }}
+#                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_SERVICE_TOKEN }}
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
+  slack-notifications:
+    runs-on: ubuntu-20.04
+    name: Sends a message to Slack when a push, a pull request or an issue is made
     steps:
-    - uses: actions/checkout@v4
-    - name: Install Deno runtime
-      uses: denoland/setup-deno@v1
-      with:
-        deno-version: v1.x
-
-    - name: Install Slack CLI
-      if: steps.cache-slack.outputs.cache-hit != 'true'
-      run: |
-        curl -fsSL https://downloads.slack-edge.com/slack-cli/install.sh | bash
-
-    - name: Deploy the app
-      env:
-        SLACK_SERVICE_TOKEN: ${{ secrets.SLACK_SERVICE_TOKEN }}
-      run: |
-        cd gh-actions-demo/
-        slack deploy -s --token $SLACK_SERVICE_TOKEN
+      - name: Send message to Slack API
+        uses: archive/github-actions-slack@v2.0.0
+        id: notify
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          slack-channel: CPPUV5KU0
+          slack-text: Hello! Event "${{ github.event_name }}" in "${{ github.repository }}" 🤓
+      - name: Result from "Send Message"
+        run: echo "The result was ${{ steps.notify.outputs.slack-result }}"
+      - env: SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 
