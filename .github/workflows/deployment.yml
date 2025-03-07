@@ -43,22 +43,36 @@ on:
 #         # env: 
 #         #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 
 
+# jobs:
+#   run:
+#     name: Share a travel review to channel
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout the repo
+#         uses: actions/checkout@v4
+#         with:
+#           persist-credentials: false
+
+#       - name: Forward a saved message
+#         uses: slackapi/slack-github-action@v2.0.0
+#         with:
+#           payload: "Hi"
+#           payload-templated: true
+#           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+#           webhook-type: incoming-webhook
+#         env:
+#           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+
+
 jobs:
   run:
     name: Share a travel review to channel
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the repo
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Forward a saved message
-        uses: slackapi/slack-github-action@v2.0.0
-        with:
-          payload: "Hi"
-          payload-templated: true
-          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-          webhook-type: incoming-webhook
-        env:
-          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+        -   name: Post a message in a channel
+            uses: slackapi/slack-github-action@v2.0.0
+            with:
+                webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+                webhook-type: incoming-webhook
+                payload: |
+                text: "*GitHub Action build result*: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
