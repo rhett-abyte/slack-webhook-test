@@ -76,4 +76,5 @@ jobs:
                 webhook: https://hooks.slack.com/services/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
                 webhook-type: incoming-webhook
                 payload: |
-                    text: "*GitHub Action build result*: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                    # text: "*GitHub Action build result*: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                    text: "Post to slack channel"
