@@ -69,12 +69,12 @@ jobs:
     name: Share a travel review to channel
     runs-on: ubuntu-latest
     steps:
-        -   name: Post a message in a channel
-            uses: slackapi/slack-github-action@v2.0.0
-            with:
-                # webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-                webhook: https://hooks.slack.com/services/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
-                webhook-type: incoming-webhook
-                payload: |
-                    # text: "*GitHub Action build result*: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-                    text: "Post to slack channel"
+        - name: Post a message in a channel
+          uses: slackapi/slack-github-action@v2.0.0
+          with:
+            webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+                # webhook: https://hooks.slack.com/services/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
+            webhook-type: incoming-webhook
+            payload: |
+            # text: "*GitHub Action build result*: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+            text: "Post to slack channel"
